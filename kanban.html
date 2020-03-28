@@ -145,7 +145,7 @@
                             Laiko intervalas
                         </td>
                         <td>
-                            <input type="text" id="amount" style="border: 0; color: #3399DD; font-weight: bold; width:100%; text-align:center" />
+                            <input type="text" id="amount" style="border: 0; color: #3399DD; font-weight: bold; width:100%; text-align:center"/>
                             <div id="slider-range"></div>
                         </td>
                     </tr>
@@ -192,8 +192,8 @@
                 <div style="height: 10px;"></div>
                 <!-- Create a div where the graph will take place -->
                 <div id="metrics_placeholder"></div>
-                <button class="btn btn-success bottom-buttons">Išsaugoti užduotis skaičiuoklėje</button>
-                <button class="btn btn-danger bottom-buttons">Anuliuoti</button>
+                <button class="btn btn-basic bottom-buttons">Išsaugoti užduotis skaičiuoklėje</button> <!-- success -->
+                <button class="btn btn-basic bottom-buttons">Anuliuoti</button> <!-- danger -->
                 <br><br>
                 <div class="alert alert-success alert-dismissible fade show" style="display:none">
                     <button type="button" class="close" data-dismiss="alert">&times;</button>
@@ -202,6 +202,7 @@
             </div>
         </td>
         <td class="overflow-scroll-gradient">
+            <span id="subject_placeholder" style="z-index:1;position:absolute;top:-5px;left:100px;width:400px;text-align:center"></span>
             <div class="overflow-scroll-gradient-scroller" id="calendar">
             </div>
         </td>
@@ -385,20 +386,33 @@
             },
             mouseOnDay: function(e) {
                 if (e.events.length > 0) {
-                    var content = '';
+                    var task_name = '';
+                    var subject_name = '';
 
                     for (var i in e.events) {
-                        content += '<span class="event-tooltip-content" style="color:' + subject_colors[e.events[i].subject] + ' !important">' +
+                        task_name += '<div class="event-tooltip-content">' +
                             '<div class="event-name">' + e.events[i].name + '</div>' +
-                            '<div class="event-subject">' + e.events[i].subject + '</div>' +
-                            '</span>';
+                            '</div>';
+                            try {
+                                if (e.events[i].subject === e.events[i-1].subject) {
+                                    subject_name += ''
+                                } else {
+                                    subject_name += '<span style="font-weight:bold;color:' + subject_colors[e.events[i].subject] + '">' +
+                                        e.events[i].subject + '</span>&nbsp;';
+                                }
+                            } catch (err) {
+                                subject_name += '<span style="font-weight:bold;color:' + subject_colors[e.events[i].subject] + '">' +
+                                    e.events[i].subject + '</span>&nbsp;';
+                            }
                     }
+
+                    document.getElementById("subject_placeholder").innerHTML = subject_name;
 
                     $(e.element).popover({
                         trigger: 'manual',
                         container: 'body',
                         html: true,
-                        content: content
+                        content: task_name
                     });
 
                     $(e.element).popover('show');
