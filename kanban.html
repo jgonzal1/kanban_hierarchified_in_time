@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+
+
+<meta charset="utf-8">
+
+<head>
+    <link rel="stylesheet" href="front-end/jqcloud.css">
+    <link rel="stylesheet" href="front-end/bootstrap.4.4.1.min.css">
+    <link rel="stylesheet" href="front-end/jquery-ui.css">
+    <link rel="stylesheet" href="front-end/bootstrap-year-calendar.min.css">
+    <link rel="stylesheet" href="front-end/bootstrap-year-calendar.css">
+
+    <title>Kanban</title>
+    <link rel="icon" type="image/x-icon" href="front-end/dumbo.ico">
+
+    <script src="tasks.js"></script>
+    <script src="front-end/jquery.3.4.1.min.js"></script>
+    <script src="front-end/popper.min.js"></script>
+    <script src="front-end/bootstrap.4.4.1.min.js"></script>
+    <script src="front-end/jqcloud.js"></script>
+    <script src="front-end/bootstrap-year-calendar.min.js"></script>
+    <script src="front-end/bootstrap-year-calendar.js"></script>
+    <!--<script src="front-end/bootstrap-year-calendar.d.ts"></script>-->
+    <style>
+        /** {
+            padding: 5px;
+        }
+        body {
+            width: 1000px;
+        }*/
+        
+        table {
+            max-width: 650px;
+        }
+        
+        img {
+            position: absolute;
+        }
+        
+        div {
+            text-align: center;
+        }
+        
+        label,
+        td {
+            padding-top: 0px;
+            padding-bottom: 4px;
+        }
+        
+        td:first-child {
+            text-align: right
+        }
+        
+        .badge {
+            border: 2px solid white;
+            border-radius: 5px;
+        }
+        
+        .left {
+            text-align: left;
+        }
+        
+        .bottom-buttons {
+            position: relative;
+            top: -120px !important;
+        }
+        
+        .overflow-scroll-gradient {
+            position: relative;
+        }
+        
+        .overflow-scroll-gradient::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            width: 600px;
+            height: 600px;
+            background: linear-gradient(transparent, white);
+            pointer-events: none;
+        }
+        
+        .overflow-scroll-gradient-scroller {
+            overflow-y: scroll;
+            background: white;
+            width: 595px;
+            height: 595px;
+            padding: 15px;
+            line-height: 1.2;
+        }
+        
+        #logo {
+            z-index: 1;
+            height: 100px;
+            width: 100px;
+            top: 24px;
+            left: 400px;
+        }
+        
+        #img_edit {
+            z-index: 1;
+            height: 32px;
+            width: 32px;
+            top: 290px;
+            left: 380px;
+        }
+        
+        #main_container {
+            height: 700px;
+        }
+        
+        #metrics_placeholder {
+            height: 400px;
+            width: 400px;
+            top: -100px !important;
+            left: 40px !important;
+        }
+    </style>
+</head>
+
+<table>
+    <tr>
+        <td>
+            <div class="container p-3 my-3 border" id="main_container">
+                <h2 class="left">Sonatos namų darbai</h2>
+                <img id="logo" src="./front-end/dumbo.png">
+                <table class="table-bordered">
+                    <tr>
+                        <td>
+                            Subjektas
+                        </td>
+                        <td>
+                            <div class="form-group" style="margin-bottom: 0px;">
+                                <label for="x_list"></label>
+                                <select class="form-control" id="x_list">
+                                        <option>Practices + Master's thesis</option>
+                                        <option>2</option>
+                                        <option>3</option>
+                                        <option>4</option>
+                                    </select>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Laiko intervalas
+                        </td>
+                        <td>
+                            <input type="text" id="amount" style="border: 0; color: #3399DD; font-weight: bold; width:100%; text-align:center" />
+                            <div id="slider-range"></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Pridėti užduotį
+                        </td>
+                        <td id="summary">
+                            C
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Namų darbai
+                        </td>
+                        <td style="background-color: #FFFFFF;">
+                            <span class="badge badge-primary">write report</span>&nbsp;
+                            <span class="badge badge-primary">qm force field</span>&nbsp;
+                            <span class="badge badge-primary">biological force field</span>&nbsp;
+                            <img id="img_edit" src="./front-end/pencil.png">
+                        </td>
+                    </tr>
+                    <tr style="display:none">
+                        <td>
+                            Dropdown
+                        </td>
+                        <td>
+                            <div class="dropdown left">
+                                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                                        6
+                                    </button>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="#">Link 1</a>
+                                    <a class="dropdown-item" href="#">Link 2</a>
+                                    <a class="dropdown-item" href="#">Link 3</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="#">Another link</a>
+                                </div>
+                                maksimalus
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+                <div style="height: 10px;"></div>
+                <!-- Create a div where the graph will take place -->
+                <div id="metrics_placeholder"></div>
+                <button class="btn btn-success bottom-buttons">Išsaugoti užduotis skaičiuoklėje</button>
+                <button class="btn btn-danger bottom-buttons">Anuliuoti</button>
+                <br><br>
+                <div class="alert alert-success alert-dismissible fade show" style="display:none">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <strong>¡Guardado!</strong> Cambios guardados.
+                </div>
+            </div>
+        </td>
+        <td class="overflow-scroll-gradient">
+            <div class="overflow-scroll-gradient-scroller" id="calendar">
+            </div>
+        </td>
+    </tr>
+</table>
+
+<!-- date slider -->
+<script>
+    // Date(new Date().getTime()).toLocaleString().substring(0,24)
+    $(function() {
+        $("#slider-range").slider({
+            range: true,
+            min: new Date().getTime() / 1000,
+            max: new Date('2020.06.21').getTime() / 1000,
+            step: 86400,
+            values: [new Date().getTime() / 1000, (new Date().getTime() + 10e8) / 1000],
+            slide: function(event, ui) {
+                $("#amount").val((new Date(ui.values[0] * 1000).toDateString()) + " - " + (new Date(ui.values[1] * 1000)).toDateString());
+            }
+        });
+        $("#amount").val((new Date($("#slider-range").slider("values", 0) * 1000).toDateString()) +
+            " - " + (new Date($("#slider-range").slider("values", 1) * 1000)).toDateString());
+    });
+</script>
+<script src="front-end/jquery-ui.js"></script>
+<!-- word cloud -->
+<script>
+    // válidos decimales; por debajo de 4.0 se oculta
+    const milliseconds_in_a_day = 1000*60*60*24;
+    new Date(new Date() - new Date(2020,2,3)) / (1000*60*60*24); // diferencia en días
+    var myTags = tasks.map(function (el) {
+        return {
+            text: el["name"],
+            weight: Math.round(new Date(el["endDate"] - el["startDate"]) / milliseconds_in_a_day)
+        }
+    });
+    
+    /*var myTags = [{
+        text: "run_partition_simulation_drug_1",
+        weight: 4
+    }, {
+        text: "qm_force_field_vaccuum",
+        weight: 2
+    }, {
+        text: "qm_force_field_water",
+        weight: 3
+    }, {
+        text: "write_masters_thesis_report",
+        weight: 3
+    }, {
+        text: "biological_force_field_complete_in_report",
+        weight: 1
+    }, {
+        text: "run_partition_simulation_drug_2",
+        weight: 4
+    }, {
+        text: "run_partition_simulation_drug_3",
+        weight: 1
+    }, {
+        text: "qm_force_field_vaccuum",
+        weight: 3
+    }];*/
+    $("#metrics_placeholder").jQCloud(
+        myTags, {
+            //Assuming 20 days the most for a task
+            fontSize: Array.from({length: 20}, (v, i) => 21-i)
+        }
+    );
+    //$("#metrics_placeholder").jQCloud(myTags, {
+    //    delayedMode: true,
+    //    shape: false, // 'rectangular' or false
+    //    encodeURI: true,
+    //    removeOverflowing: true
+    //});        
+    function getCurrentDateValues() {
+        const y_int = new Date().getUTCFullYear();
+        const yyyy = y_int.toString();
+        const m_int = new Date().getUTCMonth() + 1;
+        const mm = (m_int < 10 ? `0${m_int}` : m_int.toString());
+        const d_int = new Date().getUTCDate();
+        const dd = (d_int < 10 ? `0${d_int}` : d_int.toString());
+        return [yyyy, mm, dd]
+    }
+    /** @typedef HTMLElements @type {object} */
+    /**
+     * @returns {HTMLElements} with date and time inputs and label. Also displays restriction
+     */
+    (function appendDateBasedOnCurrentDate(dom_id = "summary") {
+        const y_int = new Date().getUTCFullYear();
+        [yyyy, mm, dd] = getCurrentDateValues();
+        const minDate = `${yyyy}-${mm}-${dd}`;
+        const maxDate = `${(y_int+2).toString()}-${mm}-${dd}`;
+        const label = '<label for="appt"><hr></label>';
+        const dateInput = `<input type="date" value="${yyyy}-${mm}-${dd}" min="${minDate}" max="${maxDate}"></input>&nbsp;`;
+        const hourInput = '<input type="time" id="appt" name="appt" min="08:45" max="23:00" value="08:45" required><br>';
+        const legend = '<small>' +
+            '<br></small>';
+        document.getElementById(dom_id).innerHTML = label + dateInput + hourInput + legend;
+    })();
+
+    function editEvent(event) {
+        $('#event-modal input[name="event-index"]').val(event ? event.id : '');
+        $('#event-modal input[name="event-name"]').val(event ? event.name : '');
+        $('#event-modal input[name="event-subject"]').val(event ? event.subject : '');
+        $('#event-modal input[name="event-start-date"]').datepicker('update', event ? event.startDate : '');
+        $('#event-modal input[name="event-end-date"]').datepicker('update', event ? event.endDate : '');
+        $('#event-modal').modal();
+    }
+
+    function deleteEvent(event) {
+        var dataSource = $('#calendar').data('calendar').getDataSource();
+
+        for (var i in dataSource) {
+            if (dataSource[i].id == event.id) {
+                dataSource.splice(i, 1);
+                break;
+            }
+        }
+
+        $('#calendar').data('calendar').setDataSource(dataSource);
+    }
+
+    function saveEvent() {
+        var event = {
+            id: $('#event-modal input[name="event-index"]').val(),
+            name: $('#event-modal input[name="event-name"]').val(),
+            subject: $('#event-modal input[name="event-subject"]').val(),
+            startDate: $('#event-modal input[name="event-start-date"]').datepicker('getDate'),
+            endDate: $('#event-modal input[name="event-end-date"]').datepicker('getDate')
+        }
+
+        var dataSource = $('#calendar').data('calendar').getDataSource();
+
+        if (event.id) {
+            for (var i in dataSource) {
+                if (dataSource[i].id == event.id) {
+                    dataSource[i].name = event.name;
+                    dataSource[i].subject = event.subject;
+                    dataSource[i].startDate = event.startDate;
+                    dataSource[i].endDate = event.endDate;
+                }
+            }
+        } else {
+            var newId = 0;
+            for (var i in dataSource) {
+                if (dataSource[i].id > newId) {
+                    newId = dataSource[i].id;
+                }
+            }
+
+            newId++;
+            event.id = newId;
+
+            dataSource.push(event);
+        }
+
+        $('#calendar').data('calendar').setDataSource(dataSource);
+        $('#event-modal').modal('hide');
+    }
+
+    $(function() {
+        var currentYear = new Date().getFullYear();
+
+        $('#calendar').calendar({
+            enableContextMenu: true,
+            enableRangeSelection: true,
+            contextMenuItems: [{
+                text: 'Update',
+                click: editEvent
+            }, {
+                text: 'Delete',
+                click: deleteEvent
+            }],
+            minDate: new Date(),
+            maxDate: new Date('2020.06.21'),
+            selectRange: function(e) {
+                editEvent({
+                    startDate: e.startDate,
+                    endDate: e.endDate
+                });
+            },
+            mouseOnDay: function(e) {
+                if (e.events.length > 0) {
+                    var content = '';
+
+                    for (var i in e.events) {
+                        content += '<span class="event-tooltip-content" style="color:' + subject_colors[e.events[i].subject] + ' !important">' +
+                            '<div class="event-name">' + e.events[i].name + '</div>' +
+                            '<div class="event-subject">' + e.events[i].subject + '</div>' +
+                            '</span>';
+                    }
+
+                    $(e.element).popover({
+                        trigger: 'manual',
+                        container: 'body',
+                        html: true,
+                        content: content
+                    });
+
+                    $(e.element).popover('show');
+                }
+            },
+            mouseOutDay: function(e) {
+                if (e.events.length > 0) {
+                    $(e.element).popover('hide');
+                }
+            },
+            dayContextMenu: function(e) {
+                $(e.element).popover('hide');
+            },
+            dataSource: tasks
+        });
+
+        $('#save-event').click(function() {
+            saveEvent();
+        });
+    });
+</script>
+</body>
+
+</html>
